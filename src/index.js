@@ -23,8 +23,8 @@ app.use(express.static(publicDirectory))
 io.on('connection',(socket)=>{
     console.log('connection full filled')   
 
-    socket.on('join',({username,room},callback) => {
-        const {error,user}=addUser({id:socket.id,username,room})
+    socket.on('join', (options, callback) => {
+        const { error, user } = addUser({ id: socket.id, ...options })
         if(error) {
             return callback(error)
         }
@@ -56,7 +56,7 @@ io.on('connection',(socket)=>{
         if(removedUser) {
             io.to(removedUser.room).emit('message',getTimeWithMessage('Admin',`${removedUser.username} left the chat`))
             io.to(removedUser.room).emit('roomData',{
-                room:user.room,
+                room:removedUser.room,
                 users : getUsersInRoom(removedUser.room)
             })
         }
